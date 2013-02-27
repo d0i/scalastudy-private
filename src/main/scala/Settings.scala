@@ -16,38 +16,40 @@ Options are
  -strict
 """)
   }
-}
-object Settings {
-  def parseArgs(args: List[java.lang.String]): Settings = {
-    var setting = new Settings()
-    parseArgsR(args, setting)
-  }
-  def parseArgsR(args: List[java.lang.String], setting: Settings): Settings = {
+
+  def parseArgsR(args: List[java.lang.String]): Settings = {
     args match {
       case "-help" :: Nil => {
-	setting.printHelp()
+	this.printHelp()
 	System.exit(0)
       }
       case "-strict" :: other => {
-	setting += ("grammarMode" -> "strict")
-	return parseArgsR(other, setting)
+	this += ("grammarMode" -> "strict")
+	return this.parseArgsR(other)
       }
 
       case schemaname :: filename :: Nil => {
-	setting += ("schemaname" -> schemaname)
-	setting += ("filename" -> filename)
+	this += ("schemaname" -> schemaname)
+	this += ("filename" -> filename)
       }
 
-      case filename :: Nil => setting += ("filename" -> filename)
+      case filename :: Nil => this += ("filename" -> filename)
 
       case _ => {
         println("please specify XML filename to encode.")
-	setting.printHelp()
+	this.printHelp()
 	System.exit(1)
       }
     }
 
-    setting
+    this
+  }
+}
+
+object Settings {
+  def parseArgs(args: List[java.lang.String]): Settings = {
+    var setting = new Settings()
+    setting.parseArgsR(args)
   }
 
   def main(args: Array[java.lang.String]) {
