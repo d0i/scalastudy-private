@@ -1,7 +1,7 @@
 import scala.collection.mutable.HashMap
 
-class Settings extends HashMap[java.lang.String, java.lang.String] {
-  this += ("grammarMode" -> "nonstrict")
+class Settings extends HashMap[Symbol, java.lang.String] {
+  this += ('grammarMode -> "nonstrict", 'encodeMode -> "bit")
   def printConfig() {
     this.foreach(kv => println(kv._1+": "+kv._2))
   }
@@ -24,16 +24,20 @@ Options are
 	System.exit(0)
       }
       case "-strict" :: other => {
-	this += ("grammarMode" -> "strict")
+	this += ('grammarMode -> "strict")
+	return this.parseArgsR(other)
+      }
+      case "-bytealign" :: other => {
+	this += ('encodeMode -> "byte")
 	return this.parseArgsR(other)
       }
 
       case schemaname :: filename :: Nil => {
-	this += ("schemaname" -> schemaname)
-	this += ("filename" -> filename)
+	this += ('schemaname -> schemaname)
+	this += ('filename -> filename)
       }
 
-      case filename :: Nil => this += ("filename" -> filename)
+      case filename :: Nil => this += ('filename -> filename)
 
       case _ => {
         println("please specify XML filename to encode.")
